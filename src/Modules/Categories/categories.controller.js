@@ -127,3 +127,7 @@ export const updateCategory = async (req,res,next)=>{
         data:category
     })
 }
+
+/**
+ * @api {DELETE} /category/delete    delete category 
+ */
