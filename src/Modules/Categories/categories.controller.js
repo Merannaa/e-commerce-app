@@ -5,7 +5,7 @@ import slugify from "slugify"
 import { Category } from '../../../DB/Models/index.js'
 
 /**
- * @api {POST} /category/create add  category
+ * @api {POST} /categories/create add  category
  */
 
 export const createCategory = async(req,res,next)=>{
@@ -55,7 +55,7 @@ export const createCategory = async(req,res,next)=>{
 }
 
 /**
- * @api {GET} /category/   get category by id,name,slug
+ * @api {GET} /categories/   get category by id,name,slug
  */
 export const getCategory = async(req,res,next)=>{
     //data in query
@@ -82,7 +82,7 @@ export const getCategory = async(req,res,next)=>{
 }
 
 /**
- * @api {PUT} /category/update    update category 
+ * @api {PUT} /categories/update/:id    update category 
  */
 
 export const updateCategory = async (req,res,next)=>{
@@ -129,5 +129,26 @@ export const updateCategory = async (req,res,next)=>{
 }
 
 /**
- * @api {DELETE} /category/delete    delete category 
+ * @api {DELETE} /categories/delete/:_id   delete category 
  */
+
+export const deleteCategory = async (req,res,next)=>{
+    const {_id}=req.params;
+
+    const category = await Category.findByIdAndDelete(_id)
+    if(!category){
+        return next(new ErrorClass('category not found',404,'category not found'))
+    }
+    
+    //path folder
+    const categoryPath = `${process.env.UPLOADS_FOLDER}/Categories/${category.customId}`;
+
+    await cloudinaryConfig().api.delete_resources_by_prefix(categoryPath)
+    await cloudinaryConfig().api.delete_folder(categoryPath)
+
+    res.status(200).json({
+        status:'success',
+        message:'category deleted sucessfully',
+        data:category
+    })
+}
