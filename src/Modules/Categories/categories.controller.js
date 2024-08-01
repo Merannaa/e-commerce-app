@@ -2,7 +2,7 @@ import { nanoid } from 'nanoid'
 import {cloudinaryConfig, ErrorClass, uploadFile} from '../../Utils/index.js'
 
 import slugify from "slugify"
-import { Category } from '../../../DB/Models/index.js'
+import { Brand, Category, SubCategory } from '../../../DB/Models/index.js'
 
 /**
  * @api {POST} /categories/create add  category
@@ -146,6 +146,14 @@ export const deleteCategory = async (req,res,next)=>{
     await cloudinaryConfig().api.delete_resources_by_prefix(categoryPath)
     await cloudinaryConfig().api.delete_folder(categoryPath)
 
+    //todo delete related to subcategory & brands
+
+    const deletedSubCategory = await SubCategory.deleteMany({
+        categoryId:_id
+    })
+    if(deletedSubCategory.deletedCount){
+       await Brand.deleteMany({categoryId:_id})
+    }
     res.status(200).json({
         status:'success',
         message:'category deleted sucessfully',
