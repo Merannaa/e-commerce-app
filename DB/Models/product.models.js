@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 
 import slugify from 'slugify'
 
-import { DiscountType ,Badges} from "../../src/Utils.js";
+import { DiscountType ,Badges,calculateProductPrice} from "../../src/Utils.js";
 
 
 const {Schema, model} = mongoose;
@@ -49,14 +49,7 @@ const productSchema = new Schema({
         type:Number,
         required:true,
         default:function(){
-            
-                if(this.appliedDiscount.type === DiscountType.PERCENTAGE){
-                    return this.price - (this.price * this.appliedDiscount.amount /100);
-                } else if(this.appliedDiscount.type === DiscountType.FIXED) {
-                    return this.price - this.appliedDiscount.amount;
-                }else{
-                    return this.price
-                }
+            return calculateProductPrice(this.price,this.appliedDiscount)
         }
     },
     stock:{
