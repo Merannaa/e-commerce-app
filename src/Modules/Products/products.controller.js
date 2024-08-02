@@ -66,3 +66,47 @@ export const addProduct = async (req,res,next)=>{
         data:newProduct
     })
 }
+
+export const updateProduct = async (req,res,next)=>{
+    //productId from param
+    const {productId}=req.params
+
+    //destruct from body
+    const {title,stock,overview,badge,price,discountAmount,discountType,specs}=req.body
+
+    //find product by id
+    const product = await Product.findById(productId)
+
+    if(!product){
+        return next(new ErrorClass('product not found',404))
+    }
+
+    if(title){
+        product.title=title
+        product.slug=slugify(title,{replacement:'_',lower:true})
+    }
+    if(stock) product.stock=stock
+    if(overview) product.overview=overview
+    if(badge) product.badges=badge
+
+    if(price || discountAmount || discountType){
+        const newPrice = price || product.price
+        const discount ={}
+        discount.amount = discountAmount || product.appliedDiscount.amount
+        discount.type = discountType || product.appliedDiscount.type
+
+        product.appliedPrice = calculateProductPrice(newPrice,discount)   
+
+        product.price=newPrice
+        product.appliedDiscount =discount
+    }
+
+    if(specs) product.specs=specs
+    
+    await product.save()
+    res.status(200).json({
+        status:'success',
+        message:'product updated successfully',
+        data:product
+    })
+}
