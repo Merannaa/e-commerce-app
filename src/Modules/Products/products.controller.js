@@ -67,6 +67,10 @@ export const addProduct = async (req,res,next)=>{
     })
 }
 
+/**
+ * @api {PUT} /products/update/:productId  update product
+ */
+
 export const updateProduct = async (req,res,next)=>{
     //productId from param
     const {productId}=req.params
