@@ -80,7 +80,10 @@ export const updateProduct = async (req,res,next)=>{
     const {title,stock,overview,badge,price,discountAmount,discountType,specs}=req.body
 
     //find product by id
-    const product = await Product.findById(productId)
+    const product = await Product.findById(productId).
+    populate("categoryId").
+    populate("subCategoryId").
+    populate("brandId")
 
     if(!product){
         return next(new ErrorClass('product not found',404))
@@ -107,7 +110,16 @@ export const updateProduct = async (req,res,next)=>{
     }
 
     if(specs) product.specs=specs
-    
+    //TO DO
+    if(req.file){
+        const splitedPublicId =product.Images.public_id.split(`${product.customId}/`)[1];
+        const{secure_url}= await uploadFile({
+            file:req.file.path,
+            folder:`${process.env.UPLOADS_FOLDER}/Categories/${product.categoryId.customId}/SubCategories/${product.subCategoryId.customId}/Brands/${product.brandId.customId}/Products/${product.customId}`,
+            publicId:splitedPublicId,
+        })
+        product.Images.secure_url=secure_url
+    }
     await product.save()
     res.status(200).json({
         status:'success',
@@ -115,3 +127,39 @@ export const updateProduct = async (req,res,next)=>{
         data:product
     })
 }
+
+/**
+ * @api {GET} /products/list  list all products
+ */
+
+export const listProducts = async (req,res,next) =>{
+    const { page = 1, limit = 5} =req.query
+    const skip=(page-1)*limit
+
+
+    //paginate way1
+    // const products = await Product.find().
+    // limit(limit).
+    // skip(skip).
+    // select('-Images -specs -categoryId -subCategoryId -brandId')
+
+    // plugin way2
+    const products = await Product.paginate(
+        {
+            appliedPrice:{$gte:20000}
+        },
+        {
+            page,
+            limit,
+            select:'-Images -specs -categoryId -subCategoryId -brandId',
+            sort:{appliedPrice:1}
+        })
+    res.status(200).json({
+        status:'success',
+        message:'product list',
+        data:products
+    })
+}
+//page  1   2    3      4 
+//limit 50  50   50     50
+//skip  0   50   100   150 (page-1)* limit

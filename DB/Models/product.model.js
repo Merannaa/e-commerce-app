@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
-
+import mongoose from "../global-setup.js";
 import slugify from 'slugify'
 
+//utils
 import { DiscountType ,Badges,calculateProductPrice} from "../../src/Utils/index.js";
 
 
