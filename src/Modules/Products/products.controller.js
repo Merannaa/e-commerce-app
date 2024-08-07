@@ -114,3 +114,4 @@ export const updateProduct = async (req,res,next)=>{
         data:product
     })
 }
+
