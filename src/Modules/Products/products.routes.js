@@ -18,6 +18,9 @@ productRouter.post('/add',
     checkIdExist(Brand),
     errorHandler(controller.addProduct))
 
-    productRouter.put('/update/:productId',
+productRouter.put('/update/:productId',
         errorHandler(controller.updateProduct))
+
+
+productRouter.get('/list',errorHandler(controller.listProducts))
 export { productRouter };
