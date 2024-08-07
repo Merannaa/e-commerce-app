@@ -115,3 +115,35 @@ export const updateProduct = async (req,res,next)=>{
     })
 }
 
+/**
+ * @api {GET} /products/list  list all products
+ */
+
+export const listProducts = async (req,res,next) =>{
+    const { page = 1, limit = 5} =req.query
+    const skip=(page-1)*limit
+
+
+    //paginate way1
+    // const products = await Product.find().
+    // limit(limit).
+    // skip(skip).
+    // select('-Images -specs -categoryId -subCategoryId -brandId')
+
+    // plugin way2
+    const products = await Product.paginate(
+        {
+            appliedPrice:{$gte:20000}
+        },
+        {
+            page,
+            limit,
+            select:'-Images -specs -categoryId -subCategoryId -brandId',
+            sort:{appliedPrice:1}
+        })
+    res.status(200).json({
+        status:'success',
+        message:'product list',
+        data:products
+    })
+}
