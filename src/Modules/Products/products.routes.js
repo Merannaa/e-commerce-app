@@ -24,5 +24,6 @@ productRouter.put('/update/:productId',
 productRouter.get('/list',errorHandler(controller.listProducts))
 
 
+productRouter.get('/list',errorHandler(controller.listProducts))
 export { productRouter };
 
