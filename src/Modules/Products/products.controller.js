@@ -1,8 +1,12 @@
 import { nanoid } from 'nanoid'
+
+import slugify from 'slugify'
+
 //utils
-import { ErrorClass, uploadFile} from '../../Utils/index.js'
+import { calculateProductPrice, ErrorClass, uploadFile} from '../../Utils/index.js'
 //models
 import {Product } from '../../../DB/Models/index.js'
+import { ApiFeatures } from '../../Utils/api-features.utils.js'
 
 /**
  * @api {POST} /products/add   add product
@@ -79,7 +83,11 @@ export const updateProduct = async (req,res,next)=>{
     const {title,stock,overview,badge,price,discountAmount,discountType,specs}=req.body
 
     //find product by id
-    const product = await Product.findById(productId)
+    const product = await Product.findById(productId).
+    populate("categoryId").
+    populate("subCategoryId").
+    populate("brandId")
+
 
     if(!product){
         return next(new ErrorClass('product not found',404))
@@ -106,7 +114,18 @@ export const updateProduct = async (req,res,next)=>{
     }
 
     if(specs) product.specs=specs
-    
+
+    //TO DO
+    if(req.file){
+        const splitedPublicId =product.Images.public_id.split(`${product.customId}/`)[1];
+        const{secure_url}= await uploadFile({
+            file:req.file.path,
+            folder:`${process.env.UPLOADS_FOLDER}/Categories/${product.categoryId.customId}/SubCategories/${product.subCategoryId.customId}/Brands/${product.brandId.customId}/Products/${product.customId}`,
+            publicId:splitedPublicId,
+        })
+        product.Images.secure_url=secure_url
+    }
+
     await product.save()
     res.status(200).json({
         status:'success',
@@ -120,6 +139,17 @@ export const updateProduct = async (req,res,next)=>{
  */
 
 export const listProducts = async (req,res,next) =>{
+
+    // const { page = 1, limit = 5, ...filters} =req.query
+    // const skip=(page-1)*limit
+
+    //apply filters
+    
+    // const filterString=JSON.stringify(filters)
+    // const replacefilter= filterString.replaceAll(/lt|gt|lte|gte/g, (ele)=>`$${ele}`)
+    // const parseFilter = JSON.parse(replacefilter)
+
+
     const { page = 1, limit = 5} =req.query
     const skip=(page-1)*limit
 
@@ -129,6 +159,16 @@ export const listProducts = async (req,res,next) =>{
     // limit(limit).
     // skip(skip).
     // select('-Images -specs -categoryId -subCategoryId -brandId')
+
+
+    // plugin way2
+    const mongooseQuery =  Product.find()
+
+    const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query).pagination().sort().filters()
+
+    // const products = await apiFeaturesInstance.mongooseQuery
+    // const products = await Product.find().skip(0).limit(2).sort("price")
+
 
     // plugin way2
     const products = await Product.paginate(
@@ -147,3 +187,7 @@ export const listProducts = async (req,res,next) =>{
         data:products
     })
 }
+//page  1   2    3      4 
+//limit 50  50   50     50
+//skip  0   50   100   150 (page-1)* limit
+

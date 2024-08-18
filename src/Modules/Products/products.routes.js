@@ -19,8 +19,11 @@ productRouter.post('/add',
     errorHandler(controller.addProduct))
 
 productRouter.put('/update/:productId',
-        errorHandler(controller.updateProduct))
+    errorHandler(controller.updateProduct))
+
+productRouter.get('/list',errorHandler(controller.listProducts))
 
 
 productRouter.get('/list',errorHandler(controller.listProducts))
 export { productRouter };
+

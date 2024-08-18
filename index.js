@@ -11,10 +11,12 @@ const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
+
 app.use('/categories',router.categoryRouter)
 app.use('/sub-categories',router.subCategoryRouter)
 app.use('/brands',router.brandRouter)
 app.use('/products',router.productRouter)
+app.use('/users',router.userRouter)
 
 app.use(globaleResponse)
 
