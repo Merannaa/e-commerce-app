@@ -5,6 +5,7 @@ import slugify from 'slugify'
 import { calculateProductPrice, ErrorClass, uploadFile} from '../../Utils/index.js'
 //models
 import {Product } from '../../../DB/Models/index.js'
+import { ApiFeatures } from '../../Utils/api-features.utils.js'
 /**
  * @api {POST} /products/add   add product
  */
@@ -133,8 +134,15 @@ export const updateProduct = async (req,res,next)=>{
  */
 
 export const listProducts = async (req,res,next) =>{
-    const { page = 1, limit = 5} =req.query
-    const skip=(page-1)*limit
+    // const { page = 1, limit = 5, ...filters} =req.query
+    // const skip=(page-1)*limit
+
+    //apply filters
+    
+    // const filterString=JSON.stringify(filters)
+    // const replacefilter= filterString.replaceAll(/lt|gt|lte|gte/g, (ele)=>`$${ele}`)
+    // const parseFilter = JSON.parse(replacefilter)
+
 
 
     //paginate way1
@@ -143,17 +151,15 @@ export const listProducts = async (req,res,next) =>{
     // skip(skip).
     // select('-Images -specs -categoryId -subCategoryId -brandId')
 
+
     // plugin way2
-    const products = await Product.paginate(
-        {
-            appliedPrice:{$gte:20000}
-        },
-        {
-            page,
-            limit,
-            select:'-Images -specs -categoryId -subCategoryId -brandId',
-            sort:{appliedPrice:1}
-        })
+    const mongooseQuery =  Product.find()
+
+    const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query).pagination().sort().filters()
+
+    const products = await apiFeaturesInstance.mongooseQuery
+    // const products = await Product.find().skip(0).limit(2).sort("price")
+
     res.status(200).json({
         status:'success',
         message:'product list',

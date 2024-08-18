@@ -3,6 +3,7 @@ import {cloudinaryConfig, ErrorClass, uploadFile} from '../../Utils/index.js'
 
 import slugify from "slugify"
 import { Brand, Category, SubCategory } from '../../../DB/Models/index.js'
+import { ApiFeatures } from '../../Utils/api-features.utils.js'
 
 /**
  * @api {POST} /categories/create add  category
@@ -146,17 +147,36 @@ export const deleteCategory = async (req,res,next)=>{
     await cloudinaryConfig().api.delete_resources_by_prefix(categoryPath)
     await cloudinaryConfig().api.delete_folder(categoryPath)
 
-    //todo delete related to subcategory & brands
+    // //todo delete related to subcategory & brands
 
-    const deletedSubCategory = await SubCategory.deleteMany({
-        categoryId:_id
-    })
-    if(deletedSubCategory.deletedCount){
-       await Brand.deleteMany({categoryId:_id})
-    }
+    // const deletedSubCategory = await SubCategory.deleteMany({
+    //     categoryId:_id
+    // })
+    // if(deletedSubCategory.deletedCount){
+    //    await Brand.deleteMany({categoryId:_id})
+    // }
     res.status(200).json({
         status:'success',
         message:'category deleted sucessfully',
+        data:category
+    })
+}
+
+/**
+ * @api {GET} /categories/list   list category 
+ */
+
+
+export const listCategory = async (req,res,next) =>{
+    const mongooseQuery = Category.find()
+
+    const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query).pagination().filters()
+
+    const category = await apiFeaturesInstance.mongooseQuery
+     
+    res.status(200).json({
+        status:'success',
+        message:'category list',
         data:category
     })
 }

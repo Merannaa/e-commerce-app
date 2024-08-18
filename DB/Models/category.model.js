@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from "../global-setup.js";
+
+
 
 const {Schema, model} = mongoose;
 
@@ -41,4 +43,19 @@ const categorySchema = new Schema({
     timestamps:true
 })
 
+categorySchema.post("findOneAndDelete",async function(){
+    const _id = this.getQuery()._id
+    const deletedSubCategories =await mongoose.models.SubCategory.deleteMany({
+        categoryId:_id
+    })
+    
+    if(deletedSubCategories.deletedCount){
+        const deleteBrand = await mongoose.models.Brand.deleteMany({categoryId:_id})
+        if(deleteBrand.deletedCount){
+            await mongoose.models.Product.deleteMany({categoryId:_id})
+        }
+    }
+    
+    
+})
 export const Category = mongoose.models.Category || model('Category', categorySchema)
