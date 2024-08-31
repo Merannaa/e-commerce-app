@@ -4,7 +4,8 @@ import mongoose from '../global-setup.js';
 const {Schema, model} = mongoose;
 
 
-const userSchema = new Schema({
+const userSchema = new Schema(
+    {
     username:{
         type:String,
         required:true
@@ -41,9 +42,14 @@ const userSchema = new Schema({
     isMarkedAsDeleted:{
         type:Boolean,
         default:false
+    },
+    status:{
+        type:String,
+        enum:['online','offline'],
+        default:'offline'
     }
-},
-{
+    }
+    ,{
     timestamps:true
 })
 

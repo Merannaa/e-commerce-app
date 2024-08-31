@@ -17,10 +17,13 @@ app.use('/sub-categories',router.subCategoryRouter)
 app.use('/brands',router.brandRouter)
 app.use('/products',router.productRouter)
 app.use('/users',router.userRouter)
+app.use('/users',router.userRouter)
+app.use('/addresses',router.addressRouter)
+app.use('/carts',router.cartRouter)
 
 app.use(globaleResponse)
 
 db_connection();
 
-app.get("/", (req, res) => res.send("Hello World!"));
+app.get("/", (req, res) => res.send("Hello E commerce!"));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
