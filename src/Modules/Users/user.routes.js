@@ -10,5 +10,6 @@ const userRouter = Router();
 
 userRouter.post('/register',errorHandler(controller.signup))
 userRouter.patch('/update/:userId',errorHandler(controller.updateUser))
+userRouter.post('/login',errorHandler(controller.signin))
 
 export { userRouter };
