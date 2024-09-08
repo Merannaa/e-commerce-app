@@ -1,4 +1,5 @@
 
+import axios from 'axios'
 import { Address,User } from '../../../DB/Models/index.js'
 import { ErrorClass } from '../../Utils/index.js'
 
@@ -10,7 +11,16 @@ export const addAdress= async(req,res,next)=>{
     const {country,city,postalCode,buildingNumber,floorNumber,addressLabel,setAsDefault}=req.body
     //login user
     const userId= req.authUser._id
-
+    //validate city //country=EG
+    const cities = await axios.get(`https://api.api-ninjas.com/v1/city?country=${country}&limit=30`,{
+        Headers:{
+            'X-Api-Key':process.env.CITY_API_KEY
+        }
+    })
+    const isCityExist = cities.data.find(c=>c.name === city)
+    if(!isCityExist){
+        return next(new ErrorClass('city not found',404 ))
+    }
     const newAddress = new Address({
         userId,country,city,postalCode,buildingNumber,floorNumber,addressLabel,
         isDefault:[true,false].includes(setAsDefault) ? setAsDefault : false
