@@ -4,6 +4,8 @@ import { config } from "dotenv";
 import { globaleResponse } from "./src/Middlewares/error-handling.middleware.js";
 import db_connection from "./DB/connection.js";
 import * as router from './src/Modules/index.js'
+import { gracefulShutdown } from "node-schedule";
+import { disableCouponCron } from './src/Utils/crons.utils.js'
 
 config();
  
@@ -20,10 +22,15 @@ app.use('/users',router.userRouter)
 app.use('/users',router.userRouter)
 app.use('/addresses',router.addressRouter)
 app.use('/carts',router.cartRouter)
+app.use('/coupons',router.couponRouter)
+app.use('/orders',router.orderRouter)
 
 app.use(globaleResponse)
 
 db_connection();
+
+disableCouponCron()
+gracefulShutdown()
 
 app.get("/", (req, res) => res.send("Hello E commerce!"));
 app.listen(port, () => console.log(`Example app listening on port ${port}!`));
