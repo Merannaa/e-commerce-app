@@ -28,6 +28,7 @@ export const addToCart = async(req,res,next)=>{
     }
 
     const isProductExist = cart.products.find(p=> p.productId == productId)
+    
     if(isProductExist){
         return next(new ErrorClass('product already in the cart',400))
     }

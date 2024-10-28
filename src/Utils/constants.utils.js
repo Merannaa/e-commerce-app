@@ -4,7 +4,16 @@ export const UserTypes={
     Buyer:'buyer',
     Seller:'seller'
 }
+export const Badges={
+    NEW:"New",
+    SALE:"Sale",
+    BEST_SELLER:"Best Seller"
+}
 
+export const DiscountType={
+    PERCENTAGE:"Percentage",
+    FIXED:"Fixed"
+}
 export const CouponTypes = {
     Percentage:'percentage',
     Amount:'amount'
@@ -26,4 +35,10 @@ export const OrderStatus = {
     Returned:'returned',
     Dropped:'dropped',
     Onway:'onway'
+}
+
+export const ReviewStatus={
+    Pending:'pending',
+    Accepted:'accepted',
+    Rejected:'recjected'
 }

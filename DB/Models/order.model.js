@@ -36,7 +36,7 @@ const orderSchema = new Schema({
     addressId:{
         type:Schema.Types.ObjectId,
         ref:'Address',
-        required:true
+        // required:true
     },
     contactNumber:{
         type:String,
@@ -60,7 +60,7 @@ const orderSchema = new Schema({
     },
     total:{
         type:Number,
-        required:true
+        // required:true
     },
     estimatedDeliveryDate:{
         type:Date,

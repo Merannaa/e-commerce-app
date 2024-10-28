@@ -11,7 +11,7 @@ const couponSchema = new Schema({
         required:true,
         unique:true
     },
-    cuponAmount:{
+    couponAmount:{
         type:Number,
         required:true
     },
