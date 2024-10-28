@@ -3,7 +3,7 @@ import { nanoid } from 'nanoid'
 import slugify from 'slugify'
 
 //utils
-import { calculateProductPrice, ErrorClass, uploadFile} from '../../Utils/index.js'
+import { calculateProductPrice, ErrorClass, ReviewStatus, uploadFile} from '../../Utils/index.js'
 //models
 import {Product } from '../../../DB/Models/index.js'
 import { ApiFeatures } from '../../Utils/api-features.utils.js'
@@ -164,7 +164,12 @@ export const listProducts = async (req,res,next) =>{
     // plugin way2
     const mongooseQuery =  Product.find()
 
-    const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query).pagination().sort().filters()
+    const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query, [
+        { path:"Reviews", match: {reviewStatus: ReviewStatus.Accepted} },
+    ])
+    // .pagination()
+    // .sort()
+    // .filters()
 
     // const products = await apiFeaturesInstance.mongooseQuery
     // const products = await Product.find().skip(0).limit(2).sort("price")

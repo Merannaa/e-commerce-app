@@ -8,7 +8,10 @@ const orderRouter = Router();
 
 // routes
 
-orderRouter.post('/create',auth(),errorHandler(controller.createOrder))
+orderRouter.post('/create',auth(),errorHandler(controller.createOrder));
+orderRouter.put('/canceled/:orderId',auth(),errorHandler(controller.cancelOrder))
+orderRouter.put('/delivered/:orderId',auth(),errorHandler(controller.deliveredOrder))
+orderRouter.get('/',auth(),errorHandler(controller.listOrders))
 
 
 

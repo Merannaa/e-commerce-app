@@ -41,13 +41,13 @@ export const applyCoupon= (subTotal,coupon)=>{
     let total = subTotal
     const {couponAmount:discountAmount,couponType:discountType}=coupon
     if(discountAmount && discountType){
-        if(discount.type == DiscountType.PERCENTAGE){
-            total = subTotal - (subTotal * discount.amount /100);
-        } else if(discount.type == DiscountType.FIXED) {
+        if(discountType == DiscountType.PERCENTAGE){
+            total = subTotal - (subTotal * discountAmount /100);
+        } else if(discountType == DiscountType.Amount) {
             if(discountAmount > subTotal){
                 return total
             }
-            total = subTotal- discount.amount;
+            total = subTotal- discountAmount;
         }
     }
     

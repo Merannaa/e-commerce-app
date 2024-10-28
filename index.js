@@ -24,6 +24,7 @@ app.use('/addresses',router.addressRouter)
 app.use('/carts',router.cartRouter)
 app.use('/coupons',router.couponRouter)
 app.use('/orders',router.orderRouter)
+app.use('/reviews',router.reviewRoute)
 
 app.use(globaleResponse)
 

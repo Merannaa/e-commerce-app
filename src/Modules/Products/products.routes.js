@@ -2,7 +2,7 @@ import { Router } from "express";
 
 import * as controller from './products.controller.js'
 
-import { checkIdExist, errorHandler, getDocumentByName, multerHost } from "../../Middlewares/index.js"
+import { checkIdExist, errorHandler, getDocumentByName, multerHost,auth } from "../../Middlewares/index.js"
 
 import { extensions } from "../../Utils/index.js";
 
@@ -24,6 +24,6 @@ productRouter.put('/update/:productId',
 productRouter.get('/list',errorHandler(controller.listProducts))
 
 
-productRouter.get('/list',errorHandler(controller.listProducts))
+productRouter.get('/list',auth(),errorHandler(controller.listProducts))
 export { productRouter };
 

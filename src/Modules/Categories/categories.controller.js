@@ -172,7 +172,7 @@ export const listCategory = async (req,res,next) =>{
 
     const apiFeaturesInstance = new ApiFeatures(mongooseQuery,req.query).pagination().filters()
 
-    const category = await apiFeaturesInstance.mongooseQuery
+    const category = await apiFeaturesInstance.mongooseQuery;
      
     res.status(200).json({
         status:'success',
